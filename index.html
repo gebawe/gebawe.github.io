@@ -1,979 +1,823 @@
 <!doctype html>
-<html>
-
+<html lang="en">
 <head>
-  <meta charset="utf-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Awet Gebrehiwot — ML & Computer Vision Engineer · Autonomous Driving Perception</title>
+<meta name="author" content="Awet Gebrehiwot">
+<meta name="description" content="Senior Machine Learning & Computer Vision Engineer with 6+ years building end-to-end perception systems for autonomous driving: camera object detection, BEV scene understanding, LiDAR–camera fusion, and edge deployment. Publications at IROS, IEEE RA-L, ECCV.">
+<meta name="keywords" content="Awet Gebrehiwot, Computer Vision, Machine Learning, Autonomous Driving, Perception, LiDAR, BEV, Sensor Fusion, Deep Learning, PyTorch, Ottawa">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Awet Gebrehiwot — ML & Computer Vision Engineer">
+<meta property="og:description" content="6+ years building perception systems for autonomous driving. Camera & LiDAR perception, BEV, sensor fusion, edge deployment.">
+<meta property="og:image" content="images/awet_pic.png">
+<meta property="og:url" content="https://gebawe.github.io">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://gebawe.github.io">
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+<link rel="icon" href="images/favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0E14; --bg-2:#0c121b; --panel:#121a26; --panel-2:#16202e;
+  --line:#1e2a3a; --line-2:#26354a;
+  --ink:#E6EDF5; --muted:#8a9bb0; --faint:#5d6f86;
+  --cyan:#3DD4C8; --cyan-dim:#2aa79d;
+  /* segmentation-class hues — used only as data/tag accents */
+  --seg-magenta:#C961DE; --seg-lime:#9BE564; --seg-amber:#FFC857; --seg-blue:#5AA9FF;
+  --maxw:1140px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,sans-serif; font-size:16px; line-height:1.65;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+img,video{max-width:100%;display:block}
+h1,h2,h3,h4{font-family:"Space Grotesk",sans-serif;font-weight:700;line-height:1.08;margin:0}
+.mono{font-family:"IBM Plex Mono",monospace}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+::selection{background:var(--cyan);color:#04221f}
 
-  <!-- Always force latest IE rendering engine or request Chrome Frame -->
-  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+/* focus visibility */
+a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:2px}
 
-  <!-- For Bootstrap responsiveness -->
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+/* ---------- eyebrow / labels ---------- */
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--cyan);display:inline-flex;align-items:center;gap:10px;
+}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--cyan);display:inline-block}
 
-  <!-- Use title if it's in the page YAML frontmatter -->
-  <title>Awet Gebrehiwot online portfolio</title>
-  <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+/* ---------- nav ---------- */
+header.nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  background:rgba(10,14,20,.72);backdrop-filter:blur(10px);
+  border-bottom:1px solid transparent;transition:border-color .3s,background .3s;
+}
+header.nav.scrolled{border-bottom-color:var(--line);background:rgba(10,14,20,.9)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:16px;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none;margin:0;padding:0}
+.nav-links a{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--muted);transition:color .2s;position:relative;padding:4px 0}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a.active{color:var(--cyan)}
+.nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:1px;background:var(--cyan)}
+.nav-social{display:flex;gap:16px}
+.nav-social a{color:var(--muted);font-size:13px}
+.nav-social a:hover{color:var(--cyan)}
+.nav-toggle{display:none;background:none;border:1px solid var(--line-2);color:var(--ink);width:40px;height:36px;border-radius:6px;cursor:pointer;font-size:15px}
 
-  <link href="stylesheets/all.css" rel="stylesheet" />
-  <script src="javascripts/all.js"></script>
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}
+#lidar{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.hero-veil{position:absolute;inset:0;z-index:1;
+  background:radial-gradient(120% 90% at 70% 50%,rgba(10,14,20,0) 0%,rgba(10,14,20,.55) 55%,rgba(10,14,20,.94) 100%);}
+.hero .wrap{position:relative;z-index:2;width:100%}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(40px,7vw,78px);letter-spacing:-.02em;margin:18px 0 14px}
+.hero h1 .ln{display:block}
+.hero-role{font-family:"IBM Plex Mono",monospace;font-size:clamp(14px,1.7vw,18px);color:var(--muted);max-width:34ch}
+.hero-role b{color:var(--ink);font-weight:500}
+.hero-cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+.btn{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.04em;padding:13px 22px;border-radius:7px;cursor:pointer;transition:.2s var(--ease);display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line-2)}
+.btn-primary{background:var(--cyan);color:#04221f;border-color:var(--cyan);font-weight:500}
+.btn-primary:hover{background:#54e8dc;transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--ink)}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
 
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- Leave those next 4 lines if you care about users using IE8 -->
-  <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
-  <!-- Place your kit's code here -->
-  <script src="https://kit.fontawesome.com/57afb07753.js" crossorigin="anonymous"></script>
+/* HUD telemetry panel */
+.hud{border:1px solid var(--line);background:linear-gradient(180deg,rgba(18,26,38,.85),rgba(12,18,27,.7));
+  border-radius:12px;padding:6px;backdrop-filter:blur(4px)}
+.hud-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--line)}
+.hud-head span{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
+.hud-live{display:flex;align-items:center;gap:7px;color:var(--cyan)!important}
+.hud-live i{width:7px;height:7px;border-radius:50%;background:var(--cyan);display:inline-block;animation:blink 1.6s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.hud-rows{display:grid;grid-template-columns:1fr 1fr}
+.hud-cell{padding:16px 14px;border-bottom:1px solid var(--line)}
+.hud-cell:nth-child(odd){border-right:1px solid var(--line)}
+.hud-cell:nth-last-child(-n+2){border-bottom:none}
+.hud-num{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:26px;color:var(--ink);line-height:1}
+.hud-num em{font-style:normal;color:var(--cyan)}
+.hud-lab{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);margin-top:7px;letter-spacing:.04em}
+.scrollcue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:2;color:var(--faint);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;text-align:center}
+.scrollcue i{display:block;margin:8px auto 0;width:1px;height:34px;background:linear-gradient(var(--cyan),transparent);animation:cue 2s infinite}
+@keyframes cue{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
+/* ---------- section scaffold ---------- */
+section{padding:110px 0;position:relative;scroll-margin-top:72px}
+.section-head{margin-bottom:54px;max-width:680px}
+.section-head h2{font-size:clamp(28px,4vw,42px);letter-spacing:-.01em;margin:16px 0 0}
+.section-head p{color:var(--muted);margin:14px 0 0}
+.divider{height:1px;background:var(--line);max-width:var(--maxw);margin:0 auto}
+
+/* ---------- about ---------- */
+.about-grid{display:grid;grid-template-columns:300px 1fr;gap:56px;align-items:start}
+.frame{position:relative;border-radius:6px;overflow:hidden}
+.frame img{width:100%;filter:grayscale(.15) contrast(1.03)}
+.frame::before,.frame::after{content:"";position:absolute;width:26px;height:26px;z-index:2;pointer-events:none}
+.frame::before{top:10px;left:10px;border-top:2px solid var(--cyan);border-left:2px solid var(--cyan)}
+.frame::after{bottom:10px;right:10px;border-bottom:2px solid var(--cyan);border-right:2px solid var(--cyan)}
+.frame .tag{position:absolute;top:12px;right:12px;z-index:3;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;color:var(--cyan);background:rgba(10,14,20,.7);border:1px solid var(--cyan-dim);padding:3px 7px;border-radius:4px}
+.about-grid p{color:#c4d0de;margin:0 0 18px}
+.about-grid p:first-of-type{margin-top:0}
+.about-now{margin-top:8px;font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--muted)}
+.about-now b{color:var(--cyan);font-weight:500}
+
+/* ---------- experience pipeline ---------- */
+.pipeline{position:relative;margin-left:8px}
+.pipeline::before{content:"";position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:linear-gradient(var(--cyan),var(--line) 18%,var(--line))}
+.node{position:relative;padding:0 0 46px 44px}
+.node:last-child{padding-bottom:0}
+.node::before{content:"";position:absolute;left:0;top:5px;width:16px;height:16px;border-radius:50%;background:var(--bg);border:2px solid var(--cyan);box-shadow:0 0 0 4px rgba(61,212,200,.08)}
+.node .when{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--cyan);letter-spacing:.05em}
+.node h3{font-size:20px;margin:8px 0 3px}
+.node .org{color:var(--muted);font-size:14px;margin-bottom:14px}
+.node ul{margin:0;padding-left:18px;color:#c4d0de}
+.node li{margin:7px 0}
+.node li b{color:var(--ink);font-weight:600}
+.metric{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--seg-lime);border:1px solid #38502a;background:#16210f;padding:1px 7px;border-radius:4px;margin-right:4px}
+
+/* ---------- publications ---------- */
+.pubs{display:grid;gap:14px;max-width:880px}
+.pub{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;
+  border:1px solid var(--line);border-radius:10px;padding:22px 24px;background:var(--panel);transition:.25s var(--ease)}
+.pub:hover{border-color:var(--cyan-dim);transform:translateY(-2px);background:var(--panel-2)}
+.venue{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:500;padding:6px 12px;border-radius:6px;white-space:nowrap;letter-spacing:.04em}
+.v-iros{color:var(--seg-blue);background:rgba(90,169,255,.1);border:1px solid rgba(90,169,255,.3)}
+.v-ral{color:var(--seg-magenta);background:rgba(201,97,222,.1);border:1px solid rgba(201,97,222,.3)}
+.v-eccv{color:var(--seg-amber);background:rgba(255,200,87,.1);border:1px solid rgba(255,200,87,.3)}
+.pub h3{font-size:17px;font-family:"IBM Plex Sans",sans-serif;font-weight:600;line-height:1.4}
+.pub .yr{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--faint);margin-top:4px}
+.pub .ext{font-size:12px;color:var(--cyan);margin-left:7px}
+
+/* ---------- portfolio ---------- */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px}
+.filter{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.04em;color:var(--muted);
+  border:1px solid var(--line);background:transparent;padding:8px 16px;border-radius:20px;cursor:pointer;transition:.2s}
+.filter:hover{color:var(--ink);border-color:var(--line-2)}
+.filter.active{color:#04221f;background:var(--cyan);border-color:var(--cyan);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+.card{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel);transition:.3s var(--ease)}
+.card:hover{border-color:var(--cyan-dim);transform:translateY(-3px)}
+.media{position:relative;aspect-ratio:16/10;background:
+  linear-gradient(var(--line) 1px,transparent 1px) 0 0/100% 28px,
+  linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/28px 100%,
+  var(--bg-2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden}
+.media img,.media video{width:100%;height:100%;object-fit:cover}
+.media .corner{position:absolute;width:20px;height:20px;z-index:2;pointer-events:none;opacity:.85}
+.media .c-tl{top:12px;left:12px;border-top:2px solid var(--cyan);border-left:2px solid var(--cyan)}
+.media .c-br{bottom:12px;right:12px;border-bottom:2px solid var(--cyan);border-right:2px solid var(--cyan)}
+.playbtn{position:relative;z-index:3;width:58px;height:58px;border-radius:50%;border:1px solid var(--cyan);
+  background:rgba(10,14,20,.55);color:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:18px;transition:.25s}
+.media:hover .playbtn{background:var(--cyan);color:#04221f;transform:scale(1.06)}
+.media .det{position:absolute;left:12px;bottom:12px;z-index:3;font-family:"IBM Plex Mono",monospace;font-size:10px;
+  color:var(--cyan);background:rgba(10,14,20,.7);border:1px solid var(--cyan-dim);padding:2px 7px;border-radius:4px;letter-spacing:.06em}
+.card-body{padding:20px 22px 24px}
+.card-body h3{font-size:17px;line-height:1.25}
+.card-body p{color:var(--muted);font-size:14px;margin:10px 0 0}
+.card-links{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+.card-link{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--cyan);border:1px solid var(--line-2);
+  background:var(--bg-2);padding:6px 10px;border-radius:6px;display:inline-flex;align-items:center;gap:7px;transition:.2s}
+.card-link:hover{border-color:var(--cyan);background:rgba(61,212,200,.08)}
+
+/* ---------- skills ---------- */
+.skill-cols{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+.skill-card{border:1px solid var(--line);border-radius:12px;padding:26px;background:var(--panel)}
+.skill-card .ttl{display:flex;align-items:center;gap:11px;margin-bottom:16px}
+.skill-card .swatch{width:11px;height:11px;border-radius:3px}
+.skill-card h3{font-size:13px;font-family:"IBM Plex Mono",monospace;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.chip{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:#cdd8e5;border:1px solid var(--line-2);background:var(--bg-2);padding:6px 12px;border-radius:6px}
+.skill-card.wide{grid-column:1/-1}
+
+/* ---------- awards ---------- */
+.awards{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
+.award{display:flex;gap:16px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:20px 22px;background:var(--panel)}
+.award i{color:var(--seg-amber);font-size:20px;margin-top:2px}
+.award b{display:block;margin-bottom:2px}
+.award span{color:var(--muted);font-size:13.5px}
+
+/* ---------- education ---------- */
+.education-list{display:grid;gap:18px;max-width:980px}
+.edu{display:grid;grid-template-columns:180px 1fr;gap:24px;border:1px solid var(--line);border-radius:12px;padding:26px;background:var(--panel)}
+.edu-when{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--cyan);letter-spacing:.05em}
+.edu h3{font-size:20px;margin-bottom:7px}
+.edu .school{color:var(--muted);font-size:14px;margin-bottom:14px}
+.edu p{color:#c4d0de;margin:0 0 10px}
+.edu-tags{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+
+/* ---------- contact ---------- */
+.contact-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:48px;align-items:start}
+.comms{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
+.comms-head{padding:12px 18px;border-bottom:1px solid var(--line);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;color:var(--faint);text-transform:uppercase}
+.comms-row{display:flex;align-items:center;gap:14px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.comms-row:last-child{border-bottom:none}
+.comms-row i{color:var(--cyan);width:18px;text-align:center}
+.comms-row .k{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.1em}
+.comms-row .vv{font-size:14.5px}
+.comms-row a:hover{color:var(--cyan)}
+form .fld{margin-bottom:14px}
+form label{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+form input,form textarea{width:100%;background:var(--bg-2);border:1px solid var(--line-2);border-radius:8px;color:var(--ink);
+  font-family:"IBM Plex Sans",sans-serif;font-size:15px;padding:12px 14px;transition:border-color .2s}
+form input:focus,form textarea:focus{outline:none;border-color:var(--cyan)}
+form textarea{resize:vertical;min-height:120px}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line);padding:40px 0;color:var(--faint)}
+.foot-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;font-family:"IBM Plex Mono",monospace;font-size:12px}
+.foot-inner a{color:var(--muted)}
+.foot-inner a:hover{color:var(--cyan)}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- responsive ---------- */
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr;gap:30px}
+  .about-grid{grid-template-columns:1fr;gap:30px}
+  .about-grid .frame{max-width:280px}
+  .contact-grid{grid-template-columns:1fr;gap:30px}
+  .edu{grid-template-columns:1fr;gap:12px}
+  .grid,.skill-cols,.awards{grid-template-columns:1fr}
+  .nav-links,.nav-social{display:none}
+  .nav-links.open{display:flex;position:absolute;top:64px;left:0;right:0;flex-direction:column;gap:0;
+    background:var(--bg-2);border-bottom:1px solid var(--line);padding:8px 0}
+  .nav-links.open a{padding:14px 24px;width:100%;border-bottom:1px solid var(--line)}
+  .nav-toggle{display:block}
+  section{padding:80px 0}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+  .hud-live i,.scrollcue i{animation:none}
+}
+</style>
 </head>
+<body>
 
-<body class="index" title="Computer Vision">
-<nav class="navbar navbar-default" role="navigation" id="nav">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed fixed" data-toggle="collapse" data-target="#navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <i class="fa fa-reorder"></i>
-      </button>
-      <a class="navbar-brand" href="#home">
-        <img src="images/favicon.ico" alt="Logo">
-        </a>
-    </div>
-
-    <div class="collapse navbar-collapse navbar-right" id="navbar">
-      <ul class="nav navbar-nav">
-        <li><a href="#home">Home <span class="sr-only">home</span></a></li>
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a href="#home" class="brand"><span class="dot"></span>AWET GEBREHIWOT</a>
+    <nav>
+      <ul class="nav-links" id="menu">
         <li><a href="#about">About</a></li>
-        <li><a href="#resume">Resume</a></li>
-        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#publications">Publications</a></li>
+        <li><a href="#work">Work</a></li>
         <li><a href="#skills">Skills</a></li>
+        <li><a href="#education">Education</a></li>
         <li><a href="#contact">Contact</a></li>
-        <li><a href="https://linkedin.com/in/awet-haileslassie-gebrehiwot-31ba1a106"><i class="fab fa-linkedin"></i></a></li>
-        <li><a href="https://github.com/awethaileslassie"><i class="fab fa-github-alt"></i></a></li>
-        <li><a href="https://ipcv.eu"><i class="fa fa-graduation-cap"></i></a></li>
       </ul>
+    </nav>
+    <div class="nav-social">
+      <a href="https://github.com/gebawe" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i>GH</a>
+      <a href="https://linkedin.com/in/awet-haileslassie-gebrehiwot-31ba1a106" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin"></i>IN</a>
+      <a href="https://scholar.google.ca/citations?user=TG9V6UwAAAAJ&amp;hl=en" target="_blank" rel="noopener" aria-label="Google Scholar"><i class="fa fa-graduation-cap"></i>GS</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">≡</button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <canvas id="lidar"></canvas>
+  <div class="hero-veil"></div>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">Perception · Autonomous Driving</span>
+        <h1><span class="ln">Awet</span><span class="ln">Gebrehiwot</span></h1>
+        <p class="hero-role">Senior <b>Machine Learning</b> &amp; <b>Computer Vision</b> engineer. I build perception systems that turn camera and LiDAR into decisions a vehicle can act on — and ship them to the edge.</p>
+        <div class="hero-cta">
+          <a href="#work" class="btn btn-primary"><i class="fa fa-play"></i> See the work</a>
+          <a href="#contact" class="btn btn-ghost">Get in touch</a>
+        </div>
+      </div>
+      <div class="hud" aria-hidden="true">
+        <div class="hud-head"><span>perception_stack.status</span><span class="hud-live"><i></i>LIVE</span></div>
+        <div class="hud-rows">
+          <div class="hud-cell"><div class="hud-num">6<em>+</em></div><div class="hud-lab">years in production CV</div></div>
+          <div class="hud-cell"><div class="hud-num"><em>+</em>48<span style="font-size:15px"> mAP</span></div><div class="hud-lab">sim-to-real gain</div></div>
+          <div class="hud-cell"><div class="hud-num"><em>−</em>95<span style="font-size:15px">%</span></div><div class="hud-lab">false positives</div></div>
+          <div class="hud-cell"><div class="hud-num">3</div><div class="hud-lab">IROS · RA-L · ECCV</div></div>
+        </div>
+      </div>
     </div>
   </div>
-</nav>
-<div class="sidebar hidden-xs">
-   <ul>
-      <li><a href="#home"><img src="images/logo-white.png" alt="Home" width="32" style="
-       opacity: 0.8;"></a></li>
-      <li><a href="#about">ABOUT</a></li>
-      <li><a href="#resume">RESUME</a></li>
-      <li><a href="#portfolio">PORTFOLIO</a></li>
-      <li><a href="#skills">SKILLS</a></li>
-      <li><a href="#contact">CONTACT</a></li>
-      <li><b><a href="https://linkedin.com/in/awet-haileslassie-gebrehiwot-31ba1a106"><i class="fab fa-linkedin"></i></a></b></li>
-      <li><a href="https://github.com/awethaileslassie"><i class="fab fa-github-alt"></i></a></li>
-      <li><a href="https://ipcv.eu"><i class="fa fa-graduation-cap"></i></a></li>
-   </ul>
-</div>
-<section class="main" id="home">
-  <div class="banner">
-    <div class="banner-content">
-      <h1>AWET HAILESLASSIE GEBREHIWOT</h1>
-      <h3>
-        Deep Learning ** Computer Vision ** AI 
-      </h3>
-      <div class="arrow-down">
-        <a class="scroll" href="#about" id="scroll"><i class="fa fa-angle-double-down"></i></a>
+  <div class="scrollcue">SCROLL<i></i></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="wrap reveal">
+    <div class="section-head">
+      <span class="eyebrow">01 — About</span>
+      <h2>From research to the road</h2>
+    </div>
+    <div class="about-grid">
+      <div class="frame">
+        <span class="tag">SUBJECT 01</span>
+        <img src="images/awet_pic.png" alt="Awet Gebrehiwot">
+      </div>
+      <div>
+        <p>I&rsquo;m a senior machine learning and computer vision engineer with 6+ years designing and deploying end-to-end perception for autonomous driving. My work spans camera object detection, distance estimation and bird&rsquo;s-eye-view scene understanding; multimodal LiDAR&ndash;camera fusion; lane detection and road-surface modeling; and the dataset curation and robustness analysis that keep models honest.</p>
+        <p>What I enjoy most is closing the loop from paper to pavement — taking a state-of-the-art idea and making it run in real time on edge hardware inside a live autonomy stack. Along the way I&rsquo;ve published at IROS, IEEE RA-L, and ECCV.</p>
+        <p class="about-now"><b>NOW:</b> Senior Perception Specialist at Hexagon — Autonomy &amp; Positioning (NovAtel), Ottawa, Canada.</p>
       </div>
     </div>
   </div>
 </section>
+<div class="divider"></div>
 
-
-<section id="about" class="section section-solid">
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-12">
-        <h3 class="section-title">About</h3>
-        <div class="section-title-border">
-        </div>
-      </div>
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="wrap reveal">
+    <div class="section-head">
+      <span class="eyebrow">02 — Experience</span>
+      <h2>Where I&rsquo;ve built perception</h2>
     </div>
-
-    <div class="row">
-      <div class="col-xs-12 col-sm-3 col-sm-offset-1" style="top: 38px; left: -20px">
-        <img src="images/awet_pas.JPG" class="img-responsive about-img">
+    <div class="pipeline">
+      <div class="node">
+        <div class="when">DEC 2022 — PRESENT</div>
+        <h3>Senior Perception Specialist (Software Engineer)</h3>
+        <div class="org">Hexagon — Autonomy &amp; Positioning Division · NovAtel Inc. · Ottawa, Canada</div>
+        <ul>
+          <li>Designed and own a camera-based <b>multi-task perception pipeline</b> — object detection, distance estimation, and semantic segmentation — projected into a unified <b>BEV</b> scene representation for downstream autonomy.</li>
+          <li>Built lane detection and road-surface estimation from stereo-camera inputs.</li>
+          <li>Architected a sim-to-real <b>domain-adaptation</b> pipeline: <span class="metric">+48% mAP</span><span class="metric">−95% false positives</span> with no extra real-world data.</li>
+          <li>Productionized models on <b>Jetson Xavier/Orin</b> with TensorRT, network pruning, and INT8 quantization; ported Python to C++ and integrated into a ROS2 stack with field-validation campaigns.</li>
+          <li>Stood up ML experimentation infra (MLflow, AWS EC2/S3, Docker) for team-wide tracking and reproducibility.</li>
+        </ul>
       </div>
-      <div class="col-xs-12 col-sm-8">
-        <h4><i>Research and Technology Development of Perception models for Autonomous Vehicles</i></h4>
-        <p>I have a big interest and passion in Cutting–Edge Technology i.e. <i>Computer Vision</i>, <i>Deep Learning</i>, and its application in Autonomous Vehicles. It had grown since I was a little boy when I had the opportunity to play with an old radio, dynamo, and other electronic devices. My curiosity about new technology and ego to know more also arise as I try to build some device that can make my life easier. In 2020 I received my EMJMD (IPCV) Image Processing and Computer Vision Masters degree from Universite De Bordeaux, Bordeaux, France. This has allowed me to specialize in my experts, observe, and propose a solution to solve my community and the world's problem. I thought it would not just be an exciting experience but also something that would broaden my mindset and understanding towards a great Achievement.</p
+      <div class="node">
+        <div class="when">OCT 2020 — DEC 2022</div>
+        <h3>Researcher — Machine Learning &amp; 3D Perception</h3>
+        <div class="org">Vision for Robots &amp; Autonomous Systems Lab · CTU Prague · Czech Republic</div>
+        <ul>
+          <li>Led multimodal LiDAR&ndash;camera research: 3D detection, occupancy grids, semantic segmentation, 3D MOT, and motion forecasting in BEV.</li>
+          <li>Introduced <b>T-UDA</b>, a temporal unsupervised domain-adaptation framework for sequential point clouds (IROS 2023).</li>
+          <li>Proposed <b>Teachers in Concordance</b>, pseudo-labeling for large-scale 3D sequential data (IEEE RA-L 2022).</li>
+          <li>Built distributed training on SLURM/HPC clusters; collaborated directly with <a href="https://www.valeo.com/en/valeo-ai/" target="_blank" rel="noopener" style="color:var(--cyan)">Valeo.ai</a>.</li>
+        </ul>
       </div>
-    </div>
-  </div>
-
-</section>
-
-
-<!-- Resume -->
-
-<section id="resume" class="section section-blank">
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-12">
-        <h3 class="section-title">Resume</h3>
-        <div class="section-title-border"></div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="tabs">
-          <a class="tab active" href="#" data-target="#experience">
-            <h4>Computer Vision</h4>
-          </a>
-       <!--
-		  <a class="tab" href="#" data-target="#conferences">
-            <h4>Conferences</h4>
-          </a>
-	   -->
-          <a class="tab" href="#" data-target="#education">
-            <h4>Education</h4>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="tab-content" id="experience">
-      <div class="tab-background">
-        <ul class="v-timeline">
-          <li>
-            <h3 class="v-heading"><img src="images/cv.jpeg" alt="" class="trowel-icon"> Computer Vision and Deep Learning</h3>
-          </li>
-
-          <li>
-            <time class="v-time wow fadeInLeft"><span>09/2020 - present</span></time>
-            <div class="v-icon" data-toggle="collapse" data-target="#toggle-6"><i class="fa fa-plus"></i><i class="fa fa-minus"></i></div>
-            <div class="v-label wow fadeInRight">
-              <h4>Research and Technology Development</h4>
-              <b> Vision for Robots and Autonomous systems group, Center for Machine Perception (CMP), ČVUT, Prague, Czech Republic</b>
-              <p>• Developing 3D Perception models for Self-Driving Cars (Lidar, Camera) (i.e
-                3D Object Detection, Semantic Segmentation, 3D MOT, and Motion forecasting)</p>
-              <p>• SOTA review and implementing deep learning models for 3D perception</p>
-              <p>• Propose and develop novel machine learning methods (i.e., Knowledge Distillation, Pseudo-labeling in Semi-Supervised Learning)</p>
-              <p>-In collaboration with the top-tier researcher from <a href="https://www.valeo.com/en/valeo-ai/">Valeo.AI automotive</a> </p>
-            </div>
-          </li>
-
-          <li>
-            <time class="v-time wow fadeInLeft"><span>03/2022 - present</span></time>
-            <div class="v-icon" data-toggle="collapse" data-target="#toggle-6"><i class="fa fa-plus"></i><i class="fa fa-minus"></i></div>
-            <div class="v-label wow fadeInRight">
-              <h4>Software & Hardware Developer</h4>
-              <b> JALUD Embedded s.r.o. Prague, Czech Republic</b>
-              <p>• Networking, data collection and data prepossessing</p>
-              <p>• Developing a both software and hardware solutions to be integrated to existing systems</p>
-              <p>• Developing ML, & AI solutions for Sound based event recognition</p>
-              <p>• Analysis and implementation of model KPI evaluation</p>
-            </div>
-          </li>
-
-          <li>
-            <time class="v-time wow fadeInLeft"><span>01/2020 - 06/2020</span></time>
-            <div class="v-icon" data-toggle="collapse" data-target="#toggle-6"><i class="fa fa-plus"></i><i class="fa fa-minus"></i></div>
-            <div class="v-label wow fadeInRight">
-              <h4>Research Assistant</h4>
-                <b>Video Processing and Understanding Lab, UAM, Madrid, Spain</b>
-                <br>
-                <b>Project: Real-time Visual Object Tracking to Position a Mobile Camera</b>
-                <b>Tasks: </b>
-                <p>• Setup of the VOT 2019 environment to test SOTA tracking algorithms.</p>
-                <p>• Integration of SOTA algorithm into the mobile tracking system aimed at
-                tracking a target in real-time.</p>
-                <p>• Intermediate evaluation of a basic prototype of the mobile tracking system
-                (pan-tilt motion), via ﬁeld tests.</p>
-                <p>• Propose enhancements to the reference tracking algorithm, oriented to solve
-                the identiﬁed problems.</p>
-                <p>• Participate and contribution to the Visual Object Tracking Challenge (VOT
-              2020)</p>
-            </div>
-          </li>
-
-          <li>
-            <time class="v-time wow fadeInLeft"><span>09/2018 - 01/2020</span></time>
-            <div class="v-icon" data-toggle="collapse" data-target="#toggle-2"><i class="fa fa-plus"></i><i class="fa fa-minus"></i></div>
-            <div class="v-label wow fadeInRight">
-              <h4> Junior Software Developer (remote, contract based), </h4>
-              <b> Source Code IT Solutions PVT. LTD. CO., Addis Ababa, Ethiopia</b>
-              <p>• Maintaining program code to meet system requirement</p>
-              <p>• Developing web based front-end and back-end application.</p>
-             </div>
-          </li>
-
-          <li>
-            <time class="v-time wow fadeInLeft"><span>10/2016 - 08/2018</span></time>
-            <div class="v-icon" data-toggle="collapse" data-target="#toggle-2"><i class="fa fa-plus"></i><i class="fa fa-minus"></i></div>
-            <div class="v-label wow fadeInRight">
-              <h4> Assistant Lecturer and Researcher, </h4>
-              <b>Unmanned Aerial Vehicle systems (UAVs) Project at Center for Computer vision and Robotics, Mekelle University, Ethiopia</b>
-              <p>• Design and develop a Multi-copter UAV for areal navigation.</p>
-              <b>Assist and manage undergraduate students for Artificial Neural Networks and Fuzzy Logic Course:</b>
-              <p>• Deliver Laboratory Lecture and Practical implementation with Python</p>
-              <b> Supervised Undergraduate Bachelor Final Thesis Project:</b>
-              <p>• Facial verification attendance system</p>
-              <p>• Breast Cancer Detection using Deep Learning</p>
-              <p id="toggle-1" class="collapse in"> I have worked for 2 year in Designing and Developing a Multi-copter UAV that can be used for aerial navigation. Mainly I was responsible for developing the Perception model of UAV.</p>
-            </div>
-          </li>
-          <li>
-            <time class="v-time wow fadeInLeft"><span>2016-2017</span></time>
-            <div class="v-icon" data-toggle="collapse" data-target="#toggle-6"><i class="fa fa-plus"></i><i class="fa fa-minus"></i></div>
-            <div class="v-label wow fadeInRight">
-              <h4>Autonomous Humanoid Robot Project</h4>
-              <p>• Developed a Semi-autonomous humanoid robot (for soccer
-              game).</p>
-              <p>• Won Robot National Wide Robo-soccer challenge (Organized by Ministry of Science and Technology Ethiopia).</p>
-              <p id="toggle-6" class="collapse in"> In this project I was responsible for building and programing the Perception model of the robot so that it can play understand its environment and football on its own.</p>
-            </div>
-          </li>
-          <li>
-            <time class="v-time wow fadeInLeft"><span>2015 - 2016</span></time>
-            <div class="v-icon" data-toggle="collapse" data-target="#toggle-7"><i class="fa fa-plus"></i><i class="fa fa-minus"></i></div>
-            <div class="v-label wow fadeInRight">
-              <h4>Self Driving car Project</h4>
-              <p id="toggle-7" class="collapse in"> Participant in programing part of the autonomus car using Neural Networks.
-              I have also provided a lecture on Neural networks course at Mekelle University, ETHIOPIA.</p>
-            </div>
-          </li>
-          <br>
+      <div class="node">
+        <div class="when">FEB 2020 — JUN 2020</div>
+        <h3>Research Assistant — Computer Vision</h3>
+        <div class="org">Video Processing &amp; Understanding Lab (VPU) · UAM · Madrid, Spain</div>
+        <ul>
+          <li>Real-time visual tracking with deep Siamese CNNs on a PTZ-camera platform for automated presenter tracking; contributed to the VOT2020 ECCV workshop results.</li>
         </ul>
       </div>
     </div>
-
-    <div class="tab-content hidden" id="education">
-      <div class="tab-background">
-        <ul class="v-timeline">
-          <li>
-            <h3 class="v-heading"><i class="fa fa-graduation-cap"></i> Education</h3>
-          </li>
-          <li>
-            <time class="v-time wow fadeInLeft"><span>2018 - 2020</span></time>
-            <div class="v-icon" data-toggle="collapse" data-target="#toggle-2"><i class="fa fa-plus"></i><i class="fa fa-minus"></i></div>
-            <div class="v-label wow fadeInRight">
-              <h4>EMJMD Image Processing and Computer Vision, Europian Master </h4>
-              <p id="toggle-2" class="collapse in">
-                <br>
-                <br>
-                <b>Research Assistant: Video Processing and Understanding Lab</b>
-                <br>
-                <b>Project: Real-time Visual Object Tracking to Position a Mobile Camera</b>
-                <b>Tasks: </b>
-                • Setup of the VOT 2019 environment to test SOTA tracking algorithms.
-                • Integration of SOTA algorithm into the mobile tracking system aimed at
-                tracking a target in real-time.
-                • Intermediate evaluation of a basic prototype of the mobile tracking system
-                (pan-tilt motion), via ﬁeld tests.
-                • Propose enhancements to the reference tracking algorithm, oriented to solve
-                the identified problems.
-                • Participate and contribution to the Visual Object Tracking Challenge (VOT
-                2020)
-                <br>
-                <br>
-                <b> UB, Bordeaux, France</b>
-                <br>
-                <b>Modules: </b>
-                Acquisition, Reconstruction and Inverse Problems,
-                Tutored Research & Development Project II,
-                Career Development Week,
-                IT Project Management,
-                Deep Learning in Computer Vision,
-                Variational Methods and PDEs and Optimisation for Image Processing,
-                Computational Photography,
-                Augmented and Virtual Reality,
-                <br>
-                <br>
-                <br>
-                <b> UAM, Madrid</b>
-                <br>
-                <b>Modules: </b>
-                Applied Video Sequences Analysis,
-                Applied Bayesian Methods,
-                Tutored Research & Development Project I,
-                Writing/Presentation Skills Workshop,
-                Initiation to Research,
-                Vision for Multiple or Moving Cameras,
-                People Detection and Biometric Recognition,
-                Tomography and 3D Imaging applied to Biomedical Samples
-                <br>
-                <br>
-                <b> PPCU, Budapest </b>
-                <br>
-                <b>Modules: </b>
-                Parallel Computing Architectures,
-                Numerical Analysis,
-                Basic Image Processing Algorithms,
-                Data Mining and Machine Learning,
-                Design Patterns,
-                Signal Processing,
-                Multimodal Sensor Fusion and Navigation,
-                High-level Synthesis Methods on FPGA-s,
-                Intelligent Sensors
-                <b>Research Project</b>: "3D shape prediction from single RGB Image using Deep Learning".
-                <br>
-                <b>Funding</b>: Erasmus Mundus Full Scholarship (48K Euro).
-              </p>
-
-            </div>
-          </li>
-
-          <li>
-            <time class="v-time wow fadeInLeft"><span>2011 - 2016</span></time>
-            <div class="v-icon" data-toggle="collapse" data-target="#toggle-3"><i class="fa fa-plus"></i><i class="fa fa-minus"></i></div>
-            <div class="v-label wow fadeInRight">
-              <h4>BSc Computer Science and Enginering, Mekelle University, ETHIOPIA</h4>
-              <p id="toggle-3" class="collapse in">.
-                <br>
-                <b>Thesis</b>: supervised by Dr. Ramesh. Gadde: “Botnet Detection using Machine learning within LAN, final project. Reviewing the research on anomaly detection and assessing the potential to integrate machine intelligence”.
-              </p>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-
   </div>
 </section>
+<div class="divider"></div>
 
-<!-- Portfolio --> 
-
-<section class="section section-solid" id="portfolio">
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-12">
-        <h3 class="section-title">Portfolio</h3>
-        <div class="section-title-border"></div>
-      </div>
+<!-- PUBLICATIONS -->
+<section id="publications">
+  <div class="wrap reveal">
+    <div class="section-head">
+      <span class="eyebrow">03 — Publications</span>
+      <h2>Peer-reviewed research</h2>
+      <p><a class="card-link" href="https://scholar.google.ca/citations?user=TG9V6UwAAAAJ&amp;hl=en" target="_blank" rel="noopener"><i class="fa fa-graduation-cap"></i>Google Scholar</a></p>
     </div>
-
-    <div class="row">
-      <div class="col-sm-12 text-center">
-        <div class="list-inline filter-tags portfolio-tabs space-between">
-          <a class="btn btn-sm btn-theme-inverse portfolio_tab active" href="#" data-target="#all">All</a>
-          <a class="btn btn-sm btn-theme-inverse portfolio_tab" href="#" data-target="#arch-prof">DeepLearning</a>
-          <a class="btn btn-sm btn-theme-inverse portfolio_tab" href="#" data-target="#cs">Computer Vision</a>
-          <a class="btn btn-sm btn-theme-inverse portfolio_tab" href="#" data-target="#webdev">Robotics</a>
-        </div>
-      </div>
-    </div>
-    <div class="portfolio_tab-content" id="all">
-      <div class="row">
-          <div class="col-xs-12 col-sm-6">
-            <h4>3D Semantic-Segmentation for Lidar-based Autonomous Vehicle Perception.</h4><!-- Headline -->
-            <video width="500" height="300" controls>
-              <source src="images/3D_Sematic_Segmenation_results.mp4" type="video/mp4">
-
-              Your browser does not support the video tag.
-            </video>
-            <br>
-            <p>This project developed a deep learning model for 3D Semantic Segmentation</p>
-            <li>Spatio-Temporal Fusion of Sequential Lidar data</li>
-            <li>3D Semantic Segmentation of Sequential Lidar data into ~20 classes including:
-              (i.e., "Car", "Truck", "Bus", "Motorcyclist", "Bicyclist", "Pedestrian", "Sign", "Traffic Light", "Pole",
-              "Construction Cone", "Bicycle", "Motorcycle", "Building", "Vegetation", "Tree Trunk", "Curb", "Road",
-              "Lane Marker", "Walkable", "Sidewalk")
-            </li><!-- Description-->
-            <p>Using only 20% of manual labels, This work achieved State-of-the-art in 3D Semantic Segmentation using semi-supervised learning and also
-              outperforms some of the fully supervised methods.</p>
-          </div>
-
-        <div class="col-xs-12 col-sm-6">
-          <h4>Real-time multi-agent 3D tracking and velocity Estimation for Lidar based Perception.</h4><!-- Headline -->
-          <video width="500" height="350" controls>
-            <source src="images/273c1883-673a-36bf-b124-88311b1a80be_lidar_roi_nonground.mp4" type="video/mp4">
-
-            Your browser does not support the video tag.
-          </video>
-          <br>
-          <p> This project developed to enable the Autonomous Self-Driving Car to understand its environment in an urban driving scene.
-            The developed algorithm runs in realtime and enables the Autonomous Self-Driving Car to perform Perception tasks such as:
-            <li>3D Multiple Object Tracking</li>
-            <li>Multi-Agent Velocity Estimation: to measure the speed of each object/cars in the road</li>
-            <li>Localization on Map: to localize itself (know its location) as well as localize other object in the road-map</li>
-          </p><!-- Description-->
-        </div>
-
-        <div class="col-xs-12 col-sm-6">
-          <h4>3D Object Detection with Multi-Frame Lidar (Spatio-Temporal Fusion).</h4><!-- Headline -->
-          <video width="500" height="400" controls>
-            <source src="images/aeb73d7a-8257-3225-972e-99307b3a5cb0_lidar_roi_nonground.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-          <br>
-          <b>Ego-Vehicle Moving</b>
-          <p>This project developed a Deep Learning model to detect 3D objects for Self-Driving Car. </p>
-          <li>Moving Objects/vehicles Detection</li>
-          <li>Static Objects/Vehicles Detection</li>
-          <li> Moving Objects/vehicles appear as motion-blurred (scattered ) points with multiple colors.</li>
-          <p>Static Objects appear to have a denser point (visually appealing representation)</p><!-- Description-->
-        </div>
-
-        <div class="col-xs-12 col-sm-6">
-          <h4>3D Object Detection with Multi-Frame Lidar (Spatio-Temporal Fusion).</h4><!-- Headline -->
-          <video width="500" height="400" controls>
-            <source src="images/b1ca08f1-24b0-3c39-ba4e-d5a92868462c_lidar_roi_nonground.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-          <br>
-          <b>Ego-Vehicle not Moving</b>
-          <p>This project developed a Deep Learning model to detect 3D objects for Self-Driving Car. </p>
-            <li>Moving Objects/vehicles Detection</li>
-            <li>Static Objects/Vehicles Detection</li>
-          <li> Moving Objects/vehicles appear as motion-blurred (scattered ) points with multiple colors.</li>
-            <p>Static Objects appear to have a denser point (visually appealing representation)</p><!-- Description-->
-        </div>
-
-
-        <div class="col-xs-12 col-sm-6">
-            <h4>3D shape prediction from single RGB image using Deep-Learning </h4>
-            <a href="#" data-target="#arch-prof">
-  			  <img src="images/3d_shape_result.jpeg" alt="CAA Atlanta" class="src image-frame">
-            </a>
-          <br>
-            <b>Improving 3D Shape Prediction from a Single RGB image with Deep Learning by adding Prior Cues.</b>
-            <p>This project developed an end-to-end deep learning framework with Variational Autoencoder network to map both the input image and silhouette to a latent representation that will be used to extract the 3D structure of the object, which has been tested on chair category of ShapeNet dataset and outperforms the state of the art.
-            </p>
-        </div>
-          
-        <div class="col-xs-12 col-sm-6">
-            <h4>Autonomous Humanoid Robot</h4><!-- Headline -->
-            <video width="400" height="300" controls>
-              <source src="images/Robot_soccer_competition.mp4" type="video/mp4">
-                
-                Your browser does not support the video tag.
-            </video>
-            <br>
-              <b> Autonomous Humanoid Robot that can play football on its own.</b>
-              <p> This project developed both software(Computer Vision and AI) and hardware/embedded systems (Robot control board) aspect of the robot.
-              The developed tasks include:
-                <li>Object Detection/Tracking</li>
-                <li>Self Localization</li>
-                <li>Short-term Motion Planning</li>
-              </p>
-              <li>Awarded Certiﬁcate of recognition for wining the 1st annual National
-                Robo-Soccer challenge by the Ministry of Science and Technology Ethiopia</li><!-- Description-->
-          </div> 
-
-        <div class="col-xs-12 col-sm-6">
-          <h4>Motor Bike Tracking</h4><!-- Headline -->
-          <video width="400" height="300" controls>
-            <source src="images/CBWH_update_tracking.mp4" type="video/mp4">
-
-              Your browser does not support the video tag.
-          </video>
-
-          <br>
-            <p>Motor Bike Tracking in low quality video. This project is implemented during my study in masters.
-               The tracking robustness in a very noisy environment. Bolt Tracking in low quality video. </p><!-- Description -->
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <h4>Glove tracking using Corrected background meanshift</h4><!-- Headline -->
-          <video width="400" height="300" controls>
-            <source src="images/CBWH_traking.mp4" type="video/mp4">
-
-              Your browser does not support the video tag.
-          </video>
-          <br>
-            <p>Glove Tracking in low quality video. This project is implemented during my study in masters.
-               The tracking shows robustness against appearance similarity in very similar and ambiguous environment. </p><!-- Description-->
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <h4>Tracking</h4><!-- Headline -->
-            <video width="400" height="300" controls>
-            <source src="images/CBWH_powl_traking.mp4" type="video/mp4">
-
-              Your browser does not support the video tag.
-          </video>
-          <br>
-            <p>This project is implemented during my study in masters.
-               The tracking uses meanshift algorithm.</p><!-- Description -->
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <h4>Stolen Object Identifier</h4><!-- Headline -->
-          <video width="400" height="300" controls>
-            <source src="images/stolen.mp4" type="video/mp4">
-
-              Your browser does not support the video tag.
-          </video>
-          <br>
-            <p> This project developed a computer vision algorithm that can detect/identify both stolen objects as well as abandon objects.</p><!-- Description-->
-        </div>
-
-        <div class="col-xs-12 col-sm-6">
-          <h4>Multi-copter UAV(Drone)</h4>
-          <video width="500" height="400" controls>
-            <source src="images/Dron_flight_test.mp4" type="video/mp4">
-
-            Your browser does not support the video tag.
-          </video>
-          <br>
-          <p>Testing Demo of the developed Multi-copter UAV (Drone) at Lab</p><!-- Headline -->
-          <p> </p><!-- Description-->
-        </div>
-
-        <div class="col-xs-12 col-sm-6">
-          <h4>3D axis, 2D printer</h4>
-          <video width="500" height="400" controls>
-            <source src="images/Dear_Marcos_2-axis_cnc_machine.mp4" type="video/mp4">
-
-            Your browser does not support the video tag.
-          </video>
-          <br>
-          <p>CNC machine that can be used for printing circuit diagram in Board, drawing pictures, and writing any given string in a paper  </p><!-- Headline -->
-          <p> </p><!-- Description-->
-        </div>
-
-        </div>
-      </div>
-
-
-      <div class="portfolio_tab-content hidden" id="arch-prof">
-        <div class="row">
-          <div class="col-xs-12 col-sm-6">
-            <h4>3D Semantic-Segmentation for Lidar-based Autonomous Vehicle Perception.</h4><!-- Headline -->
-            <video width="500" height="300" controls>
-              <source src="images/3D_Sematic_Segmenation_results.mp4" type="video/mp4">
-
-              Your browser does not support the video tag.
-            </video>
-            <br>
-            <p>This project developed a deep learning model for 3D Semantic Segmentation</p>
-            <li> Spatio-Temporal Fusion of Sequential Lidar data</li>
-            <li>3D Semantic Segmentation of Sequential Lidar data into ~20 classes including:
-              (i.e., "Car", "Truck", "Bus", "Motorcyclist", "Bicyclist", "Pedestrian", "Sign", "Traffic Light", "Pole",
-              "Construction Cone", "Bicycle", "Motorcycle", "Building", "Vegetation", "Tree Trunk", "Curb", "Road",
-              "Lane Marker", "Walkable", "Sidewalk")
-            </li><!-- Description-->
-            <p>Using only 20% of manual labels, This work achieved State-of-the-art in 3D Semantic Segmentation using semi-supervised learning and also
-              outperforms some of the fully supervised methods.</p>
-          </div>
-
-          <div class="col-xs-12 col-sm-6">
-            <h4>3D Object Detection with Multi-Frame Lidar (Spatio-Temporal Fusion).</h4><!-- Headline -->
-            <video width="500" height="400" controls>
-              <source src="images/aeb73d7a-8257-3225-972e-99307b3a5cb0_lidar_roi_nonground.mp4" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-            <br>
-            <b>Ego-Vehicle Moving</b>
-            <p>This project developed a Deep Learning model to detect 3D objects for Self-Driving Car. </p>
-            <li>Moving Objects/vehicles Detection</li>
-            <li>Static Objects/Vehicles Detection</li>
-            <li> Moving Objects/vehicles appear as motion-blurred (scattered ) points with multiple colors.</li>
-            <p>Static Objects appear to have a denser point (visually appealing representation)</p><!-- Description-->
-          </div>
-
-          <div class="col-xs-12 col-sm-6">
-            <h4>3D Object Detection with Multi-Frame Lidar (Spatio-Temporal Fusion).</h4><!-- Headline -->
-            <video width="500" height="400" controls>
-              <source src="images/b1ca08f1-24b0-3c39-ba4e-d5a92868462c_lidar_roi_nonground.mp4" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-            <br>
-            <b>Ego-Vehicle not Moving</b>
-            <p>This project developed a Deep Learning model to detect 3D objects for Self-Driving Car. </p>
-            <li>Moving Objects/vehicles Detection</li>
-            <li>Static Objects/Vehicles Detection</li>
-            <li> Moving Objects/vehicles appear as motion-blurred (scattered ) points with multiple colors.</li>
-            <p>Static Objects appear to have a denser point (visually appealing representation)</p><!-- Description-->
-          </div>
-
-
-          <div class="col-xs-12 col-sm-6">
-            <h4>3D shape prediction from single RGB image using Deep-Learning </h4>
-            <a href="#" data-target="#arch-prof">
-              <img src="images/3d_shape_result.jpeg" alt="CAA Atlanta" class="src image-frame">
-            </a>
-            <br>
-            <b>Improving 3D Shape Prediction from a Single RGB image with Deep Learning by adding Prior Cues.</b>
-            <p>This project developed an end-to-end deep learning framework with Variational Autoencoder network to map both the input image and silhouette to a latent representation that will be used to extract the 3D structure of the object, which has been tested on chair category of ShapeNet dataset and outperforms the state of the art.
-            </p>
-          </div>
-
-
-          <div class="col-xs-12 col-sm-6">
-            <p>3D shape prediction from single RGB image using Deep-Learning </p>
-            <a href="#" data-target="#arch-prof">
-  			  <img src="images/model.jpg" alt="CAA Atlanta" class="src image-frame">
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="portfolio_tab-content hidden" id="cs">
-        <div class="row">
-
-          <div class="col-xs-12 col-sm-6">
-            <h4>Real-time multi-agent 3D tracking and velocity Estimation for Lidar based Perception.</h4><!-- Headline -->
-            <video width="500" height="350" controls>
-              <source src="images/273c1883-673a-36bf-b124-88311b1a80be_lidar_roi_nonground.mp4" type="video/mp4">
-
-              Your browser does not support the video tag.
-            </video>
-            <br>
-            <p> This project developed to enable the Autonomous Self-Driving Car to understand its environment in an urban driving scene.
-              The developed algorithm runs in realtime and enables the Autonomous Self-Driving Car to perform Perception tasks such as:
-            <li>3D Multiple Object Tracking</li>
-            <li>Multi-Agent Velocity Estimation: to measure the speed of each object/cars in the road</li>
-            <li>Localization on Map: to localize itself (know its location) as well as localize other object in the road-map</li>
-            </p><!-- Description-->
-          </div>
-
-          div class="col-xs-12 col-sm-6">
-          <h4>Motor Bike Tracking</h4><!-- Headline -->
-          <video width="400" height="300" controls>
-            <source src="images/CBWH_update_tracking.mp4" type="video/mp4">
-
-            Your browser does not support the video tag.
-          </video>
-
-          <br>
-          <p>Motor Bike Tracking in low quality video. This project is implemented during my study in masters.
-            The tracking robustness in a very noisy environment. Bolt Tracking in low quality video. </p><!-- Description -->
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <h4>Glove tracking using Corrected background meanshift</h4><!-- Headline -->
-          <video width="400" height="300" controls>
-            <source src="images/CBWH_traking.mp4" type="video/mp4">
-
-            Your browser does not support the video tag.
-          </video>
-          <br>
-          <p>Glove Tracking in low quality video. This project is implemented during my study in masters.
-            The tracking shows robustness against appearance similarity in very similar and ambiguous environment. </p><!-- Description-->
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <h4>Tracking</h4><!-- Headline -->
-          <video width="400" height="300" controls>
-            <source src="images/CBWH_powl_traking.mp4" type="video/mp4">
-
-            Your browser does not support the video tag.
-          </video>
-          <br>
-          <p>This project is implemented during my study in masters.
-            The tracking uses meanshift algorithm.</p><!-- Description -->
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <h4>Stolen Object Identifier</h4><!-- Headline -->
-          <video width="400" height="300" controls>
-            <source src="images/stolen.mp4" type="video/mp4">
-
-            Your browser does not support the video tag.
-          </video>
-          <br>
-          <p> This project developed a computer vision algorithm that can detect/identify both stolen objects as well as abandon objects.</p><!-- Description-->
-        </div>
-      </div>
-
-      <div class="portfolio_tab-content hidden" id="webdev">
-        <div class="row">
-          <div class="col-xs-12 col-sm-6">
-            <h4>Autonomous Humanoid Robot</h4><!-- Headline -->
-            <video width="400" height="300" controls>
-              <source src="images/Robot_soccer_competition.mp4" type="video/mp4">
-
-              Your browser does not support the video tag.
-            </video>
-            <br>
-            <b> Autonomous Humanoid Robot that can play football on its own.</b>
-            <p> This project developed both software(Computer Vision and AI) and hardware/embedded systems (Robot control board) aspect of the robot.
-              The developed tasks include:
-            <li>Object Detection/Tracking</li>
-            <li>Self Localization</li>
-            <li>Short-term Motion Planning</li>
-            </p>
-            <li>Awarded Certiﬁcate of recognition for wining the 1st annual National
-              Robo-Soccer challenge by the Ministry of Science and Technology Ethiopia</li><!-- Description-->
-          </div>
-        </div>
-        </div>
-      </div>
-
-      </div>
+    <div class="pubs">
+      <a class="pub" href="https://doi.org/10.1109/IROS55552.2023.10341446" target="_blank" rel="noopener" aria-label="Read T-UDA: Temporal Unsupervised Domain Adaptation in Sequential Point Clouds">
+        <span class="venue v-iros">IROS</span>
+        <div><h3>T-UDA: Temporal Unsupervised Domain Adaptation in Sequential Point Clouds <i class="fa fa-external-link ext" aria-hidden="true"></i></h3>
+        <div class="yr">IEEE/RSJ IROS · 2023</div></div>
+      </a>
+      <a class="pub" href="https://doi.org/10.1109/LRA.2022.3226029" target="_blank" rel="noopener" aria-label="Read Teachers in Concordance for Pseudo-Labeling of 3D Sequential Data">
+        <span class="venue v-ral">RA-L</span>
+        <div><h3>Teachers in Concordance for Pseudo-Labeling of 3D Sequential Data <i class="fa fa-external-link ext" aria-hidden="true"></i></h3>
+        <div class="yr">IEEE Robotics and Automation Letters · 2022</div></div>
+      </a>
+      <a class="pub" href="https://doi.org/10.1007/978-3-030-68238-5_39" target="_blank" rel="noopener" aria-label="Read The Eighth Visual Object Tracking VOT2020 Challenge Results">
+        <span class="venue v-eccv">ECCV</span>
+        <div><h3>The Eighth Visual Object Tracking VOT2020 Challenge Results <i class="fa fa-external-link ext" aria-hidden="true"></i></h3>
+        <div class="yr">ECCV Workshops · 2020</div></div>
+      </a>
     </div>
   </div>
-
 </section>
+<div class="divider"></div>
 
-<!-- Skills -->
+<!-- WORK / PORTFOLIO -->
+<section id="work">
+  <div class="wrap reveal">
+    <div class="section-head">
+      <span class="eyebrow">04 — Work</span>
+      <h2>Perception, in motion</h2>
+      <p>Selected demos from autonomous-driving perception, 3D vision, and robotics. Click any feed to play.</p>
+    </div>
+    <div class="filters" id="filters">
+      <button class="filter active" data-f="all">All</button>
+      <button class="filter" data-f="dl">Deep Learning</button>
+      <button class="filter" data-f="cv">Computer Vision</button>
+      <button class="filter" data-f="rob">Robotics</button>
+    </div>
+    <div class="grid" id="grid">
 
-<section class="section section-blank" id="skills">
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-12">
-        <h3 class="section-title">Skills</h3>
-        <div class="section-title-border"></div>
+      <article class="card" data-cat="dl cv">
+        <div class="media" data-video="images/3D_Sematic_Segmenation_results.mp4">
+          <span class="corner c-tl"></span><span class="corner c-br"></span>
+          <span class="det">SEG · 20 CLS</span>
+          <div class="playbtn"><i class="fa fa-play"></i></div>
+        </div>
+        <div class="card-body"><h3>3D Semantic Segmentation — LiDAR</h3>
+          <p>Spatio-temporal fusion of sequential LiDAR; ~20 classes. State-of-the-art with only 20% of manual labels via semi-supervised learning.</p>
+          <div class="card-links">
+            <a class="card-link" href="https://github.com/ctu-vras/T-Concord3D" target="_blank" rel="noopener"><i class="fab fa-github"></i>T-Concord3D</a>
+            <a class="card-link" href="https://github.com/ctu-vras/T-UDA" target="_blank" rel="noopener"><i class="fab fa-github"></i>T-UDA code</a>
+            <a class="card-link" href="https://arxiv.org/abs/2207.06079" target="_blank" rel="noopener"><i class="fa fa-file-alt"></i>Related paper</a>
+          </div></div>
+      </article>
+
+      <article class="card" data-cat="dl cv">
+        <div class="media" data-video="images/273c1883-673a-36bf-b124-88311b1a80be_lidar_roi_nonground.mp4">
+          <span class="corner c-tl"></span><span class="corner c-br"></span>
+          <span class="det">3D MOT · v(t)</span>
+          <div class="playbtn"><i class="fa fa-play"></i></div>
+        </div>
+        <div class="card-body"><h3>Real-time Multi-agent 3D Tracking</h3>
+          <p>3D multi-object tracking, per-object velocity estimation, and on-map localization for urban driving scenes.</p></div>
+      </article>
+
+      <article class="card" data-cat="dl">
+        <div class="media" data-video="images/aeb73d7a-8257-3225-972e-99307b3a5cb0_lidar_roi_nonground.mp4">
+          <span class="corner c-tl"></span><span class="corner c-br"></span>
+          <span class="det">DET 3D · EGO+</span>
+          <div class="playbtn"><i class="fa fa-play"></i></div>
+        </div>
+        <div class="card-body"><h3>3D Object Detection — ego moving</h3>
+          <p>Multi-frame LiDAR detection. Moving objects show as motion-blurred points; static ones form denser clusters.</p>
+          <div class="card-links">
+            <a class="card-link" href="https://github.com/gebawe/ST_PointRCNN" target="_blank" rel="noopener"><i class="fab fa-github"></i>ST PointRCNN</a>
+            <a class="card-link" href="https://github.com/gebawe/3D-Object-Detection-VIZ" target="_blank" rel="noopener"><i class="fab fa-github"></i>3D viz</a>
+          </div></div>
+      </article>
+
+      <article class="card" data-cat="dl">
+        <div class="media" data-video="images/b1ca08f1-24b0-3c39-ba4e-d5a92868462c_lidar_roi_nonground.mp4">
+          <span class="corner c-tl"></span><span class="corner c-br"></span>
+          <span class="det">DET 3D · EGO0</span>
+          <div class="playbtn"><i class="fa fa-play"></i></div>
+        </div>
+        <div class="card-body"><h3>3D Object Detection — ego stationary</h3>
+          <p>The same detector with a stationary ego-vehicle, showing how the representation separates moving and static agents.</p>
+          <div class="card-links">
+            <a class="card-link" href="https://github.com/gebawe/ST_PointRCNN" target="_blank" rel="noopener"><i class="fab fa-github"></i>ST PointRCNN</a>
+            <a class="card-link" href="https://github.com/gebawe/3D-Object-Detection-VIZ" target="_blank" rel="noopener"><i class="fab fa-github"></i>3D viz</a>
+          </div></div>
+      </article>
+
+      <article class="card" data-cat="dl cv">
+        <div class="media" data-img="images/3d_shape_result.jpeg">
+          <span class="corner c-tl"></span><span class="corner c-br"></span>
+          <span class="det">VAE · SHAPENET</span>
+        </div>
+        <div class="card-body"><h3>3D Shape from a Single RGB Image</h3>
+          <p>A VAE maps image + silhouette to a latent code to recover 3D structure. Evaluated on ShapeNet chairs, beating prior state of the art.</p>
+          <div class="card-links">
+            <a class="card-link" href="https://github.com/gebawe/3D-Shape-Prediction-from-a-Single-RGB-image-with-Deep-Learning" target="_blank" rel="noopener"><i class="fab fa-github"></i>3D shape code</a>
+          </div></div>
+      </article>
+
+      <article class="card" data-cat="rob">
+        <div class="media" data-video="images/Robot_soccer_competition.mp4">
+          <span class="corner c-tl"></span><span class="corner c-br"></span>
+          <span class="det">AUTONOMY · 1ST</span>
+          <div class="playbtn"><i class="fa fa-play"></i></div>
+        </div>
+        <div class="card-body"><h3>Autonomous Humanoid Robot</h3>
+          <p>Vision, self-localization, and short-term motion planning — soccer on its own. 1st place, National Robo-Soccer Challenge (Ethiopia).</p></div>
+      </article>
+
+      <article class="card" data-cat="cv">
+        <div class="media" data-video="images/CBWH_update_tracking.mp4">
+          <span class="corner c-tl"></span><span class="corner c-br"></span>
+          <span class="det">TRACK · NOISY</span>
+          <div class="playbtn"><i class="fa fa-play"></i></div>
+        </div>
+        <div class="card-body"><h3>Motorbike Tracking</h3>
+          <p>Robust target tracking in low-quality, noisy video.</p></div>
+      </article>
+
+      <article class="card" data-cat="cv">
+        <div class="media" data-video="images/CBWH_traking.mp4">
+          <span class="corner c-tl"></span><span class="corner c-br"></span>
+          <span class="det">CBWH MEAN-SHIFT</span>
+          <div class="playbtn"><i class="fa fa-play"></i></div>
+        </div>
+        <div class="card-body"><h3>Glove Tracking — corrected-background mean-shift</h3>
+          <p>Stays robust against appearance similarity in ambiguous scenes.</p></div>
+      </article>
+
+      <article class="card" data-cat="cv">
+        <div class="media" data-video="images/CBWH_powl_traking.mp4">
+          <span class="corner c-tl"></span><span class="corner c-br"></span>
+          <span class="det">MEAN-SHIFT</span>
+          <div class="playbtn"><i class="fa fa-play"></i></div>
+        </div>
+        <div class="card-body"><h3>Mean-Shift Tracking</h3>
+          <p>A classic mean-shift tracker built during my master&rsquo;s studies.</p></div>
+      </article>
+
+      <article class="card" data-cat="cv">
+        <div class="media" data-video="images/stolen.mp4">
+          <span class="corner c-tl"></span><span class="corner c-br"></span>
+          <span class="det">EVENT · OBJ</span>
+          <div class="playbtn"><i class="fa fa-play"></i></div>
+        </div>
+        <div class="card-body"><h3>Stolen / Abandoned Object Identifier</h3>
+          <p>Detects both stolen and abandoned objects from a scene.</p></div>
+      </article>
+
+      <article class="card" data-cat="rob">
+        <div class="media" data-video="images/Dron_flight_test.mp4">
+          <span class="corner c-tl"></span><span class="corner c-br"></span>
+          <span class="det">UAV · FLIGHT</span>
+          <div class="playbtn"><i class="fa fa-play"></i></div>
+        </div>
+        <div class="card-body"><h3>Multi-copter UAV</h3>
+          <p>Lab flight test of a custom-built drone developed for aerial navigation.</p></div>
+      </article>
+
+      <article class="card" data-cat="rob">
+        <div class="media" data-video="images/Dear_Marcos_2-axis_cnc_machine.mp4">
+          <span class="corner c-tl"></span><span class="corner c-br"></span>
+          <span class="det">CNC · 2-AXIS</span>
+          <div class="playbtn"><i class="fa fa-play"></i></div>
+        </div>
+        <div class="card-body"><h3>2-Axis CNC Machine</h3>
+          <p>Plots circuit diagrams, drawings, and text — a hardware build from the ground up.</p></div>
+      </article>
+
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="wrap reveal">
+    <div class="section-head">
+      <span class="eyebrow">05 — Skills</span>
+      <h2>The stack I work in</h2>
+      <p>Grouped like a segmentation legend — each class, a layer of the perception system.</p>
+    </div>
+    <div class="skill-cols">
+      <div class="skill-card">
+        <div class="ttl"><span class="swatch" style="background:var(--cyan)"></span><h3>Camera &amp; Computer Vision</h3></div>
+        <div class="chips">
+          <span class="chip">Object Detection</span><span class="chip">Distance Estimation</span><span class="chip">Semantic Segmentation</span>
+          <span class="chip">Multi-Task Learning</span><span class="chip">Lane Detection</span><span class="chip">Camera Calibration</span>
+          <span class="chip">Geometric Projection</span><span class="chip">Multi-Camera</span><span class="chip">BEV Output</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="ttl"><span class="swatch" style="background:var(--seg-blue)"></span><h3>Fusion &amp; BEV</h3></div>
+        <div class="chips">
+          <span class="chip">LiDAR–Camera Fusion</span><span class="chip">BEV Representations</span><span class="chip">Occupancy Grids</span>
+          <span class="chip">3D Detection</span><span class="chip">3D Tracking</span><span class="chip">Motion Forecasting</span><span class="chip">Multi-Sensor Alignment</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="ttl"><span class="swatch" style="background:var(--seg-magenta)"></span><h3>Deep Learning</h3></div>
+        <div class="chips">
+          <span class="chip">PyTorch</span><span class="chip">TensorFlow</span><span class="chip">CNNs</span><span class="chip">Vision Transformers</span>
+          <span class="chip">Domain Adaptation</span><span class="chip">Semi-Supervised</span><span class="chip">VLMs</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="ttl"><span class="swatch" style="background:var(--seg-amber)"></span><h3>Edge Deployment</h3></div>
+        <div class="chips">
+          <span class="chip">Jetson Xavier/Orin</span><span class="chip">TensorRT</span><span class="chip">ONNX</span>
+          <span class="chip">INT8 Quantization</span><span class="chip">Network Pruning</span><span class="chip">ROS2</span><span class="chip">C++</span><span class="chip">Python</span>
+        </div>
+      </div>
+      <div class="skill-card wide">
+        <div class="ttl"><span class="swatch" style="background:var(--seg-lime)"></span><h3>Data, Evaluation &amp; MLOps</h3></div>
+        <div class="chips">
+          <span class="chip">Dataset Curation</span><span class="chip">Annotation Pipelines</span><span class="chip">Pseudo-Labeling</span>
+          <span class="chip">Failure-Mode Analysis</span><span class="chip">Corner-Case Mining</span><span class="chip">Benchmarking</span>
+          <span class="chip">Robustness Analysis</span><span class="chip">AWS EC2/S3</span><span class="chip">SLURM/HPC</span>
+          <span class="chip">Docker</span><span class="chip">MLflow</span><span class="chip">Kubernetes</span><span class="chip">Distributed Training</span><span class="chip">Git · CI/CD</span>
+        </div>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="tabs">
-          <a class="skill_tab active" href="#" data-target="#Summery">
-            <h4>Summery</h4>
-          </a>
-          <a class="skill_tab" href="#" data-target="#coding">
-            <h4>Coding</h4>
-          </a>
-          <a class="skill_tab" href="#" data-target="#software">
-            <h4>Software</h4>
-          </a>
-          <a class="skill_tab" href="#" data-target="#hardware">
-            <h4>Hardware</h4>
-          </a>
-          <a class="skill_tab" href="#" data-target="#other_skills">
-            <h4>Other</h4>
-          </a>
-        </div>
+    <div class="awards">
+      <div class="award"><i class="fa fa-trophy"></i><div><b>Erasmus Mundus Full Scholarship</b><span>€49,000 — competitive EU award for top international students in image processing &amp; computer vision.</span></div></div>
+      <div class="award"><i class="fa fa-trophy"></i><div><b>Robot Soccer Cup — Winner</b><span>1st place, National ICT Expo 2017, Ethiopia.</span></div></div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
 
-        <div class="skill_tab-content" id="Summery">
-          <div class="skill_tab-background">
-            <div class="row">
-              <div class="col-xs-10  col-md-offset-2">
-                <div class="skill-set">
-                  <i class="fas fa-box" style="font-size: 30px; padding: 10px;"></i>
-                  <h4></h4>
-                </div>
-<!--                <ul class="fa-ul">-->
-                  <li>Excellent knowledge of both Classical and Modern Computer Vision algorithms:
-                  (i.e., Object Matching, Object Tracking, Stereo Vision, Sensor Fusion, Multi-view Geometry, SFM, and SLAM.)
-                  </li>
-                  <li>Excellent knowledge of Deep Learning, Machine Learning and AI in general:
-                  (i.e., 2D/3D Object Detection, 2D/3D Semantic Segmentation, Lane
-                    Detection/Segmentation, Parking-Lot Detection, Motion-Forecasting)
-                  </li>
-                  <li>Machine LearningL & Deep Learning Optimizing for Embedded applications (i.e.,
-                   Knowledge Distillation, Model Compression: Network Pruning, Integer/Float Quantization, Low-rank Approximation and Sparsity,
-                    Neural Architecture Search (NAS))</li>
-                  <li>Excellent C, C++, Python, and MatLab Programming skills</li>
-                  <li>Excellent command of Deep Learning framework: Pytorch, TensorFlow, and Keras</li>
-                  <li>Excellent command of open-source Library OpenCV, ROS</li>
-                  <li>Excellent command of FPGA, CUDA</li>
-                  <li>Excellent 3D modeling software: Unity 3D, Blender</li>
-                  <li>Strong experience with productivity tool (i.e., JIRA, BitBucket, Confluence) </li>
-                  <li>Solid understanding of linear algebra, geometry, image processing</li>
-                  <li>Strong written and verbal communication skills; Ability to effectively communicate design proposals</li>
-                  <li>Ability to apply analytical and problem-solving skills</li>
-                  <li>Collaborate with hardware, software architectures</li>
-                  <li>Excellent communication and teamwork skills</li>
-                  <li>Excellent English and presentation skills</li>
-                  <li>Mentoring skills</li>
-                  <li>Hardware and Software troubleshooting i.e. Computers, Mobile phone, an electronic device</li>
-                  <li>Website Design and development</li>
-                  <li>Mobile Application Development (Android)</li>
-<!--                </ul>-->
-              </div>
-            </div>
+<!-- EDUCATION -->
+<section id="education">
+  <div class="wrap reveal">
+    <div class="section-head">
+      <span class="eyebrow">06 — Education</span>
+      <h2>Academic foundation</h2>
+      <p>Computer vision and robotics training across European research labs, with a strong systems foundation from computer engineering.</p>
+    </div>
+    <div class="education-list">
+      <article class="edu">
+        <div class="edu-when">2018 — 2020</div>
+        <div>
+          <h3>EMJMD / MSc in Image Processing and Computer Vision</h3>
+          <div class="school">Universite de Bordeaux · Universidad Autonoma de Madrid · Pazmany Peter Catholic University</div>
+          <p>Erasmus Mundus joint master focused on deep learning for computer vision, multi-view geometry, video analysis, computational photography, optimization, sensor fusion, and 3D imaging.</p>
+          <p>Research projects included real-time visual object tracking for a mobile camera at UAM and 3D shape prediction from a single RGB image using deep learning.</p>
+          <div class="edu-tags">
+            <span class="chip">Erasmus Mundus Full Scholarship</span><span class="chip">€49,000 funding</span><span class="chip">IPCV</span>
           </div>
         </div>
-
-        <div class="skill_tab-content hidden" id="coding">
-          <div class="skill_tab-background">
-            <div class="row">
-              <div class="col-xs-6 col-sm-3 col-md-2 col-md-offset-1">
-                <div class="skill-set">
-                  <i class="fa fa-cogs" style="font-size: 30px; padding: 10px;"></i>
-                  <h4>Framework and Libaray</h4>
-                </div>
-                <ul class="fa-ul">
-                  <li>Keras <span class="rating">****</span></li>
-                  <li>Tensorflow <span class="rating">****</span></li>
-                  <li>Pytorch <span clas="rating">*** </span></li>
-                  <li>ROS <span class="rating">****</span></li>
-                  <li>Open-CV <span class="rating">****</span></li>
-                  <li>Matplotlib <span class="rating">****</span></li>
-                  <li>Scikit-learn <span clas="rating">*** </span></li>
-                
-                </ul>
-              </div>
-              <div class="col-xs-6 col-sm-3 col-md-2">
-                <div class="skill-set">
-                  <i class="fas fa-code" style="font-size: 30px; padding: 10px;"></i>
-                  <h4>Programing Language</h4>
-                </div>
-                <ul class="fa-ul">
-                  <li>C <span class="rating">*****</span></li>
-                  <li>C++ <span class="rating">*****</span></li>
-                  <li>Python <span class="rating">*****</span></li>
-                  <li>Java <span class="rating">***</span></li>
-                  <li>Matlab <span class="rating">****</span></li>
-                  <li>Assembly <span class="rating">****</span></li>
-                </ul>
-              </div>
-              
-              <div class="col-xs-6 col-sm-3 col-md-2">
-                <div class="skill-set">
-                  <i class="fab fa-html5 " style="font-size: 30px; padding: 10px;"></i>
-                  <h4>Web Designing</h4>
-                </div>
-                <ul class="fa-ul">
-                  <li>HTML5 <span class="rating">***</span></li>
-                  <li>Javascript <span class="rating">*</span></li>
-                  <li>CSS <span class="rating">***</span></li>
-                  <li>Wordpress <span class="rating">**</span></li>
-                  <li>Bootstrap <span class="rating">***</span></li>
-                </ul>
-              </div>
-            </div>
-          </div>
+      </article>
+      <article class="edu">
+        <div class="edu-when">2011 — 2016</div>
+        <div>
+          <h3>BSc in Computer Science and Engineering</h3>
+          <div class="school">Mekelle University · Ethiopia</div>
+          <p>Engineering foundation in computing, software, hardware, and applied machine learning.</p>
+          <p>Thesis: botnet detection using machine learning within LAN environments, including anomaly-detection research review and evaluation of machine-intelligence approaches.</p>
         </div>
+      </article>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
 
-        <div class="skill_tab-content hidden" id="software">
-          <div class="skill_tab-background">
-            <div class="row">
-              <div class="col-xs-6 col-sm-4 col-md-3 col-md-offset-2">
-                <div class="skill-set">
-                  <i class="fas fa-box" style="font-size: 30px; padding: 10px;"></i>
-                  <h4>3D Modeling</h4>
-                </div>
-                <ul class="fa-ul">
-                  <li>Unity 3D <span class="rating">***</span></li>
-                  <li>Blender <span class="rating">**</span></li>
-                  <li>Solidworks <span class="rating">*</span></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="skill_tab-content hidden" id="hardware">
-          <div class="skill_tab-background">
-            <div class="row">
-              <div class="col-xs-6 col-sm-4 col-md-3 col-md-offset-2">
-                <div class="skill-set">
-                  <i class="developer_board" style="font-size: 30px; padding: 10px;"></i>
-                  <h4>Programable Hardware</h4>
-                </div>
-                <ul class="fa-ul">
-                  <li>Raspberry Pi <span class="rating">***</span></li>
-                  <li>Arduino <span class="rating">****</span></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="skill_tab-content hidden" id="other_skills">
-          <div class="skill_tab-background">
-            <div class="row">
-              <div class="col-xs-6 col-sm-4 col-md-3 col-md-offset-2">
-                <div class="skill-set">
-                  <i class="fa fa-flag-o" style="font-size: 30px; padding: 10px;"></i>
-                  <h4>Languages</h4>
-                </div>
-                <ul class="fa-ul">
-                 
-                  <li>English <span class="rating">****</span></li>
-                  <li>French <span class="rating">*</span></li>
-                </ul>
-              </div>
-              <div class="col-xs-6 col-sm-4 col-md-3">
-                <div class="skill-set">
-                  <i class="fa fa-link" style="font-size: 30px; padding: 10px;"></i>
-                  <h4>Key skills</h4>
-                </div>
-                <ul class="fa-ul">
-                  <li>Academic writing <span class="rating">****</span></li>
-                  <li>Researcher <span class="rating">***</span></li>
-                  <li>Report writing <span class="rating">****</span></li>
-                  <li>Project management <span class="rating">****</span></li>
-                  <li>Team Payer <span class="rating">***</span></li>
-                  <li>Volunteer <span class="rating">***</span></li>
-
-                </ul>
-              </div>
-              <div class="col-xs-6 col-sm-4 col-md-3">
-                <div class="skill-set">
-                  <i class="fa fa-briefcase" style="font-size: 30px; padding: 10px;"></i>
-                  <h4>Certificates</h4>
-                </div>
-                <ul class="fa-ul">
-                  
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
+<!-- CONTACT -->
+<section id="contact">
+  <div class="wrap reveal">
+    <div class="section-head">
+      <span class="eyebrow">07 — Contact</span>
+      <h2>Let&rsquo;s talk perception</h2>
+      <p>Open to roles and collaborations in autonomous-driving perception and applied computer vision.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="comms">
+        <div class="comms-head">comms_channel.open</div>
+        <div class="comms-row"><i class="fa fa-map-marker"></i><div><div class="k">Location</div><div class="vv">Ottawa, Ontario, Canada</div></div></div>
+        <div class="comms-row"><i class="fa fa-phone"></i><div><div class="k">Phone</div><div class="vv">+1 343-988-8034</div></div></div>
+        <div class="comms-row"><i class="fab fa-linkedin"></i><div><div class="k">LinkedIn</div><div class="vv"><a href="https://www.linkedin.com/in/awet-haileslassie-gebrehiwot-1a2b3c/?" target="_blank" rel="noopener">/awet-haileslassie-gebrehiwot</a></div></div></div>
+        <div class="comms-row"><i class="fab fa-github"></i><div><div class="k">GitHub</div><div class="vv"><a href="https://github.com/gebawe" target="_blank" rel="noopener">/gebawe</a></div></div></div>
+        <div class="comms-row"><i class="fa fa-graduation-cap"></i><div><div class="k">Google Scholar</div><div class="vv"><a href="https://scholar.google.ca/citations?user=TG9V6UwAAAAJ&amp;hl=en" target="_blank" rel="noopener">/citations</a></div></div></div>
       </div>
+      <!-- To enable submissions: create a free form at https://formspree.io and replace YOUR_FORM_ID -->
+      <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <div class="fld"><label for="n">Name</label><input id="n" type="text" name="name" placeholder="Your name"></div>
+        <div class="fld"><label for="e">Email</label><input id="e" type="email" name="email" placeholder="you@domain.com"></div>
+        <div class="fld"><label for="m">Message</label><textarea id="m" name="message" placeholder="What would you like to build?"></textarea></div>
+        <input type="text" name="_gotcha" style="display:none">
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center"><i class="fa fa-paper-plane"></i> Send message</button>
+      </form>
     </div>
   </div>
 </section>
 
-<!-- Contact -->
-
-<section id="contact" class="section">
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-12">
-        <h3 class="section-title">Contact</h3>
-        <div class="section-title-border"></div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-12 col-sm-5">
-        <p>
-          Messages sent with this contact form go directly into my inbox. It is the best way to contact me.
-        </p>
-
-        <ul class="list-contacts">
-          <li><i class="fa fa-phone"></i> (+33)766646856</li>
-          <li><i class="fa fa-envelope-o"></i> <a href="mailto:awethaileslassie21@gmail.com">awethaileslassie21@gmail.com</a></li>
-        </ul>
-      </div>
-
-      <div class="col-xs-12 col-sm-7">
-      <!-- <form action="mailto:awethaileslassie21@gmail.com" method="post" enctype="text/plain"> -->
-
-        <form action="https://formspree.io/xvoooeyj" method="POST" class="form-booking"> 
-        <!-- <form action="https://formspree.io/awethaileslassie21@gmail.com" method="POST" class="form-booking"> -->
-          <div class="row">
-            <div class="col-xs-4">
-              <div class="form-group">   
-                <input type="text" name="name" class="form-control" placeholder="Name">
-              </div>
-            </div>
-            <div class="col-xs-8">
-              <div class="form-group">   
-                <input type="email" name="_replyto" class="form-control" placeholder="Email">
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <textarea name="message" class="form-group form-control" rows="5" placeholder="Message"></textarea>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <input type="text" name="_gotcha" style="display:none">
-              <button type="submit" class="btn btn-contact" style="width: 100%">Submit</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
+<footer>
+  <div class="wrap foot-inner">
+    <span>© <span id="yr"></span> Awet Gebrehiwot</span>
+    <span>Built in Ottawa · perception_stack v2</span>
+    <span><a href="https://github.com/gebawe" target="_blank" rel="noopener">github.com/gebawe</a></span>
   </div>
-</section>
+</footer>
 
+<script src="https://kit.fontawesome.com/57afb07753.js" crossorigin="anonymous"></script>
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','http://www.google-analytics.com/analytics.js','ga');
+document.getElementById('yr').textContent=new Date().getFullYear();
 
-  ga('create', 'UA-75934729-1', 'auto');
-  ga('send', 'pageview');
+/* nav scrolled state */
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>20));
 
+/* mobile menu */
+const menu=document.getElementById('menu'),tog=document.getElementById('navToggle');
+tog.addEventListener('click',()=>menu.classList.toggle('open'));
+menu.addEventListener('click',e=>{if(e.target.tagName==='A')menu.classList.remove('open')});
+
+/* scroll-spy */
+const navlinks=[...document.querySelectorAll('.nav-links a')];
+const sections=navlinks.map(a=>document.querySelector(a.getAttribute('href')));
+const spy=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){
+  const id='#'+en.target.id;navlinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')===id));
+}})},{rootMargin:'-45% 0px -50% 0px'});
+sections.forEach(s=>s&&spy.observe(s));
+
+/* reveal on scroll */
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+if(!reduce){
+  const ro=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');ro.unobserve(en.target)}})},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+}else document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+
+/* portfolio filter */
+const grid=document.getElementById('grid');
+document.getElementById('filters').addEventListener('click',e=>{
+  const b=e.target.closest('.filter');if(!b)return;
+  document.querySelectorAll('.filter').forEach(f=>f.classList.remove('active'));
+  b.classList.add('active');const f=b.dataset.f;
+  grid.querySelectorAll('.card').forEach(c=>{
+    c.style.display=(f==='all'||c.dataset.cat.includes(f))?'':'none';
+  });
+});
+
+/* click-to-load video (keeps initial page light) */
+grid.addEventListener('click',e=>{
+  const m=e.target.closest('.media[data-video]');if(!m||m.dataset.loaded)return;
+  m.dataset.loaded=1;
+  const v=document.createElement('video');
+  v.src=m.dataset.video;v.controls=true;v.autoplay=true;v.playsInline=true;v.preload='auto';
+  m.querySelectorAll('.playbtn,.det').forEach(x=>x.remove());
+  m.appendChild(v);
+});
+/* render images that aren't videos */
+grid.querySelectorAll('.media[data-img]').forEach(m=>{
+  const img=document.createElement('img');img.src=m.dataset.img;img.alt='';m.prepend(img);
+});
+
+/* ---------- LiDAR / BEV sweep hero ---------- */
+(function(){
+  const cv=document.getElementById('lidar'),ctx=cv.getContext('2d');
+  let W,H,cx,cy,pts=[],raf,ang=0,DPR=Math.min(devicePixelRatio||1,2);
+  const C={cyan:'#3DD4C8',blue:'#5AA9FF',mag:'#C961DE',lime:'#9BE564',amber:'#FFC857'};
+  const palette=[C.cyan,C.cyan,C.cyan,C.blue,C.lime,C.amber,C.mag];
+  function size(){
+    W=cv.clientWidth;H=cv.clientHeight;cv.width=W*DPR;cv.height=H*DPR;
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    cx=W*0.66;cy=H*0.5;seed();
+  }
+  function seed(){
+    pts=[];const n=Math.min(220,Math.round(W*H/7000));
+    const R=Math.max(W,H)*0.62;
+    for(let i=0;i<n;i++){
+      const a=Math.random()*Math.PI*2,r=Math.pow(Math.random(),.7)*R;
+      pts.push({a,r,c:palette[(Math.random()*palette.length)|0],b:0});
+    }
+  }
+  function ring(r){ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.strokeStyle='rgba(38,53,74,.55)';ctx.lineWidth=1;ctx.stroke();}
+  function grid(){
+    ctx.strokeStyle='rgba(30,42,58,.45)';ctx.lineWidth=1;const s=46;
+    for(let x=(cx%s);x<W;x+=s){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=(cy%s);y<H;y+=s){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  }
+  function ego(){
+    ctx.save();ctx.translate(cx,cy);
+    ctx.fillStyle=C.cyan;ctx.beginPath();ctx.moveTo(0,-9);ctx.lineTo(7,8);ctx.lineTo(0,4);ctx.lineTo(-7,8);ctx.closePath();ctx.fill();
+    ctx.shadowColor=C.cyan;ctx.shadowBlur=14;ctx.fill();ctx.restore();
+  }
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    grid();
+    const maxR=Math.max(W,H)*0.6;
+    for(let i=1;i<=5;i++)ring(maxR*i/5);
+    // sweep wedge
+    const span=0.42;
+    ctx.save();ctx.translate(cx,cy);ctx.rotate(ang);
+    const grd=ctx.createLinearGradient(0,0,maxR,0);
+    grd.addColorStop(0,'rgba(61,212,200,.18)');grd.addColorStop(1,'rgba(61,212,200,0)');
+    ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,maxR,-span,0);ctx.closePath();ctx.fillStyle=grd;ctx.fill();
+    ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(maxR*Math.cos(0),maxR*Math.sin(0));
+    ctx.strokeStyle='rgba(61,212,200,.5)';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.restore();
+    // points
+    for(const p of pts){
+      let d=(ang-p.a)%(Math.PI*2);if(d<0)d+=Math.PI*2;
+      if(d<0.18)p.b=1;else p.b*=0.985;
+      const x=cx+Math.cos(p.a)*p.r,y=cy+Math.sin(p.a)*p.r;
+      const al=0.1+p.b*0.85;
+      ctx.beginPath();ctx.arc(x,y,p.b>0.5?2.4:1.5,0,Math.PI*2);
+      ctx.fillStyle=p.c;ctx.globalAlpha=al;ctx.fill();ctx.globalAlpha=1;
+    }
+    ego();
+    ang+=0.0065;if(ang>Math.PI*2)ang-=Math.PI*2;
+    raf=requestAnimationFrame(frame);
+  }
+  function staticFrame(){
+    ctx.clearRect(0,0,W,H);grid();const maxR=Math.max(W,H)*0.6;
+    for(let i=1;i<=5;i++)ring(maxR*i/5);
+    for(const p of pts){const x=cx+Math.cos(p.a)*p.r,y=cy+Math.sin(p.a)*p.r;
+      ctx.beginPath();ctx.arc(x,y,1.6,0,Math.PI*2);ctx.fillStyle=p.c;ctx.globalAlpha=.4;ctx.fill();ctx.globalAlpha=1;}
+    ego();
+  }
+  size();addEventListener('resize',()=>{cancelAnimationFrame(raf);size();reduce?staticFrame():frame();});
+  reduce?staticFrame():frame();
+})();
 </script>
-
-
 </body>
-
-<!-- Mirrored from iriskramer.com/ by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 07 Nov 2019 13:36:45 GMT -->
 </html>
